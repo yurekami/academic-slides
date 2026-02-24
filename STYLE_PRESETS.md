@@ -1,24 +1,27 @@
 # Style Presets Reference
 
-Curated visual styles for Frontend Slides. Each preset is inspired by real design references—no generic "AI slop" aesthetics. **Abstract shapes only—no illustrations.**
+Curated Beamer-inspired academic themes for Academic Slides. Each preset is modeled after real LaTeX/Beamer presentation themes used in mathematics, computer science, and engineering talks. **Structural chrome and theorem environments only — no decorative illustrations.**
 
 ---
 
-## ⚠️ CRITICAL: Viewport Fitting (Non-Negotiable)
+## CRITICAL: Viewport Fitting (Non-Negotiable)
 
-**Every slide MUST fit exactly in the viewport. No scrolling within slides, ever.**
+**Every frame MUST fit exactly in the viewport. No scrolling within frames, ever.**
 
-### Content Density Limits Per Slide
+### Content Density Limits Per Frame
 
-| Slide Type | Maximum Content |
+| Frame Type | Maximum Content |
 |------------|-----------------|
-| Title slide | 1 heading + 1 subtitle |
-| Content slide | 1 heading + 4-6 bullets (max 2 lines each) |
-| Feature grid | 1 heading + 6 cards (2x3 or 3x2) |
-| Code slide | 1 heading + 8-10 lines of code |
-| Quote slide | 1 quote (max 3 lines) + attribution |
+| Title Frame | 1 title + 1 subtitle + author/institute/date block |
+| Content Frame | 1 heading + 4-5 bullet points OR 1 heading + 2 short paragraphs |
+| Theorem/Proof Frame | 1 theorem box (max 4 lines) + 1 proof sketch (max 5 lines) |
+| Equation Frame | 1 heading + 1-3 display equations with optional annotation |
+| Algorithm Frame | 1 heading + max 12 lines of pseudocode |
+| Definition Frame | 1 heading + 1-2 definition boxes (max 3 lines each) |
+| Citation/References Frame | 1 heading + max 8 reference entries |
+| Section Divider Frame | 1 section number + 1 section title + optional outline |
 
-**Too much content? → Split into multiple slides. Never scroll.**
+**Too much content? Split into multiple frames. Never scroll.**
 
 ### Required Base CSS (Include in ALL Presentations)
 
@@ -39,8 +42,8 @@ html {
     scroll-behavior: smooth;
 }
 
-/* 2. Each slide = exact viewport height */
-.slide {
+/* 2. Each frame = exact viewport height */
+.frame {
     width: 100vw;
     height: 100vh;
     height: 100dvh; /* Dynamic viewport for mobile */
@@ -52,14 +55,14 @@ html {
 }
 
 /* 3. Content wrapper */
-.slide-content {
+.frame-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     max-height: 100%;
     overflow: hidden;
-    padding: var(--slide-padding);
+    padding: var(--frame-padding);
 }
 
 /* 4. ALL sizes use clamp() - scales with viewport */
@@ -67,32 +70,196 @@ html {
     /* Typography */
     --title-size: clamp(1.5rem, 5vw, 4rem);
     --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    --h3-size: clamp(1rem, 2.5vw, 1.75rem);
     --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
     --small-size: clamp(0.65rem, 1vw, 0.875rem);
 
     /* Spacing */
-    --slide-padding: clamp(1rem, 4vw, 4rem);
+    --frame-padding: clamp(1rem, 4vw, 4rem);
     --content-gap: clamp(0.5rem, 2vw, 2rem);
+    --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+    /* Fonts (override per theme) */
+    --font-heading: 'STIX Two Text', 'Georgia', serif;
+    --font-body: 'Source Serif 4', 'Georgia', serif;
+    --font-mono: 'Source Code Pro', 'Courier New', monospace;
 }
 
 /* 5. Cards/containers use viewport-relative max sizes */
-.card, .container {
+.card, .container, .content-box {
     max-width: min(90vw, 1000px);
     max-height: min(80vh, 700px);
 }
 
-/* 6. Images constrained */
+/* 6. Lists auto-scale with viewport */
+.item-list, .enum-list {
+    gap: clamp(0.4rem, 1vh, 1rem);
+}
+
+.item-list li, .enum-list li {
+    font-size: var(--body-size);
+    line-height: 1.4;
+}
+
+/* 7. Images constrained */
 img {
     max-width: 100%;
     max-height: min(50vh, 400px);
     object-fit: contain;
 }
 
-/* 7. Grids adapt to space */
-.grid {
+/* ===========================================
+   THEOREM ENVIRONMENTS: MANDATORY
+   Academic content boxes for formal material
+   =========================================== */
+
+/* Theorem, definition, example, lemma, corollary */
+.theorem-box, .definition-box, .example-box, .lemma-box, .corollary-box {
+    border-left: 4px solid var(--theorem-border);
+    background: var(--theorem-bg);
+    padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.75rem, 2vw, 1.5rem);
+    margin: clamp(0.25rem, 0.5vw, 0.5rem) 0;
+    max-height: min(40vh, 350px);
+    overflow: hidden;
+}
+
+/* Definition boxes use their own color when defined */
+.definition-box {
+    border-left-color: var(--definition-border, var(--theorem-border));
+    background: var(--definition-bg, var(--theorem-bg));
+}
+
+/* Example boxes use their own color when defined */
+.example-box {
+    border-left-color: var(--example-border, var(--theorem-border));
+    background: var(--example-bg, var(--theorem-bg));
+}
+
+/* Proof environment */
+.proof-box {
+    border-left: 2px solid var(--proof-border);
+    background: var(--proof-bg);
+    padding: clamp(0.4rem, 1vw, 0.75rem) clamp(0.75rem, 2vw, 1.5rem);
+    font-style: italic;
+}
+
+.proof-box::after {
+    content: '\25A1';
+    float: right;
+    font-style: normal;
+}
+
+/* Algorithm environment */
+.algorithm-box {
+    border: 1px solid var(--theorem-border);
+    background: var(--proof-bg);
+    padding: clamp(0.5rem, 1.5vw, 1rem);
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    line-height: 1.6;
+}
+
+/* Equation block */
+.equation-block {
+    text-align: center;
+    padding: clamp(0.5rem, 1.5vw, 1rem) 0;
+    font-size: var(--h3-size);
+}
+
+/* Citation block */
+.citation-block {
+    font-size: var(--small-size);
+    line-height: 1.5;
+    padding-left: 2em;
+    text-indent: -2em;
+}
+
+/* Environment titles */
+.theorem-box .env-title,
+.definition-box .env-title,
+.example-box .env-title,
+.lemma-box .env-title,
+.corollary-box .env-title {
+    font-weight: 700;
+    font-size: var(--body-size);
+    color: var(--theorem-border);
+    margin-bottom: clamp(0.2rem, 0.5vw, 0.5rem);
+}
+
+.definition-box .env-title {
+    color: var(--definition-border);
+}
+
+.example-box .env-title {
+    color: var(--example-border);
+}
+
+/* ===========================================
+   FRAME CHROME: HEADER/FOOTER BARS
+   Beamer-style structural chrome
+   =========================================== */
+
+.frame-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--chrome-height-top, 0);
+    background: var(--header-bg);
+    color: var(--header-fg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--frame-padding);
+    font-size: var(--small-size);
+    z-index: 100;
+}
+
+.frame-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--chrome-height-bottom, 0);
+    background: var(--footer-bg);
+    color: var(--footer-fg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--frame-padding);
+    font-size: var(--small-size);
+    z-index: 100;
+}
+
+/* ===========================================
+   TWO-COLUMN LAYOUT
+   Academic-style side-by-side content
+   =========================================== */
+
+.columns {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-    gap: clamp(0.5rem, 1.5vw, 1rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: clamp(1rem, 3vw, 2.5rem);
+    max-height: min(75vh, 600px);
+    overflow: hidden;
+}
+
+/* Sidebar layout (Berlin theme) */
+.frame--sidebar {
+    flex-direction: row;
+}
+
+.frame--sidebar .sidebar {
+    width: var(--chrome-width-sidebar, 0);
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--header-bg);
+    color: var(--header-fg);
+}
+
+.frame--sidebar .frame-content {
+    flex: 1;
+    width: calc(100% - var(--chrome-width-sidebar, 0));
 }
 
 /* ===========================================
@@ -102,21 +269,24 @@ img {
 /* Short screens (< 700px height) */
 @media (max-height: 700px) {
     :root {
-        --slide-padding: clamp(0.75rem, 3vw, 2rem);
+        --frame-padding: clamp(0.75rem, 3vw, 2rem);
         --content-gap: clamp(0.4rem, 1.5vw, 1rem);
         --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+        --h2-size: clamp(1rem, 3vw, 1.75rem);
     }
 }
 
 /* Very short (< 600px height) */
 @media (max-height: 600px) {
     :root {
-        --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+        --frame-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+        --content-gap: clamp(0.3rem, 1vw, 0.75rem);
         --title-size: clamp(1.1rem, 4vw, 2rem);
         --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
     }
 
-    .nav-dots, .keyboard-hint, .decorative {
+    /* .decorative is a hook for implementers to hide optional ornamental elements */
+    .frame-nav, .keyboard-hint, .decorative {
         display: none;
     }
 }
@@ -124,15 +294,20 @@ img {
 /* Extremely short - landscape phones (< 500px) */
 @media (max-height: 500px) {
     :root {
-        --slide-padding: clamp(0.4rem, 2vw, 1rem);
+        --frame-padding: clamp(0.4rem, 2vw, 1rem);
         --title-size: clamp(1rem, 3.5vw, 1.5rem);
+        --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
         --body-size: clamp(0.65rem, 1vw, 0.85rem);
     }
 }
 
 /* Narrow screens */
 @media (max-width: 600px) {
-    .grid {
+    :root {
+        --title-size: clamp(1.25rem, 7vw, 2.5rem);
+    }
+
+    .columns {
         grid-template-columns: 1fr;
     }
 }
@@ -143,6 +318,10 @@ img {
         animation-duration: 0.01ms !important;
         transition-duration: 0.2s !important;
     }
+
+    html {
+        scroll-behavior: auto;
+    }
 }
 ```
 
@@ -150,378 +329,672 @@ img {
 
 Before finalizing any presentation, verify:
 
-- [ ] Every `.slide` has `height: 100vh; height: 100dvh; overflow: hidden;`
+- [ ] Every `.frame` has `height: 100vh; height: 100dvh; overflow: hidden;`
 - [ ] All font sizes use `clamp(min, preferred, max)`
 - [ ] All spacing uses `clamp()` or viewport units
 - [ ] Breakpoints exist for heights: 700px, 600px, 500px
-- [ ] Content respects density limits (max 6 bullets, max 6 cards)
+- [ ] Content respects density limits (max 5 bullets, max 4-line theorem, max 3 equations)
 - [ ] No fixed pixel heights on content elements
+- [ ] Theorem/definition boxes have `max-height: min(40vh, 350px)`
 - [ ] Images have `max-height` constraints
+- [ ] Frame header/footer heights use `clamp()`
+- [ ] Sidebar width (Berlin) uses `clamp()` and content area accounts for it
 
 ---
 
-## Dark Themes
+## Beamer-Inspired Themes
 
-### 1. Bold Signal
+### 1. Madrid
 
-**Vibe:** Confident, bold, modern, high-impact
+**Vibe:** Classic, trustworthy, formal — the default Beamer look
 
-**Layout:** Colored card on dark gradient. Number top-left, navigation top-right, title bottom-left.
+**Layout:** Blue header bar with section title, blue footer bar with author/title/frame number. Content centered.
 
 **Typography:**
-- Display: `Archivo Black` (900)
-- Body: `Space Grotesk` (400/500)
+- Heading: `STIX Two Text` (700)
+- Body: `STIX Two Text` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-primary: #1a1a1a;
-    --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-    --card-bg: #FF5722;
-    --text-primary: #ffffff;
-    --text-on-card: #1a1a1a;
+    --bg-primary: #ffffff;
+    --header-bg: #2c3e7b;
+    --footer-bg: #2c3e7b;
+    --header-fg: #ffffff;
+    --footer-fg: #ffffff;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a5568;
+    --theorem-bg: #e8eef8;
+    --theorem-border: #2c3e7b;
+    --definition-bg: #fdf2e9;
+    --definition-border: #d4740e;
+    --proof-bg: #f8f8f8;
+    --proof-border: #95a5a6;
+    --example-bg: #eafaf1;
+    --example-border: #27ae60;
+    --chrome-height-top: clamp(2.5rem, 5vh, 3.5rem);
+    --chrome-height-bottom: clamp(1.5rem, 3vh, 2.5rem);
 }
 ```
 
 **Signature Elements:**
-- Bold colored card as focal point (orange, coral, or vibrant accent)
-- Large section numbers (01, 02, etc.)
-- Navigation breadcrumbs with active/inactive opacity states
-- Grid-based layout for precise alignment
+- Blue header/footer bars (classic Beamer Madrid)
+- Section navigation indicators in header
+- Frame number "X / Y" in footer right
+- Author short name in footer left
+- Short title in footer center
 
 ---
 
-### 2. Electric Studio
+### 2. Berlin
 
-**Vibe:** Bold, clean, professional, high contrast
+**Vibe:** Structured, organized, navigation-focused
 
-**Layout:** Split panel—white top, blue bottom. Brand marks in corners.
+**Layout:** Sidebar on left with section navigation, main content right. Mini header bar.
 
 **Typography:**
-- Display: `Manrope` (800)
-- Body: `Manrope` (400/500)
+- Heading: `Source Serif 4` (600)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-dark: #0a0a0a;
-    --bg-white: #ffffff;
-    --accent-blue: #4361ee;
-    --text-dark: #0a0a0a;
-    --text-light: #ffffff;
+    --bg-primary: #ffffff;
+    --header-bg: #1a365d;
+    --header-fg: #ffffff;
+    --footer-bg: transparent;
+    --footer-fg: #718096;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --theorem-bg: #ebf8ff;
+    --theorem-border: #2b6cb0;
+    --definition-bg: #fefce8;
+    --definition-border: #a16207;
+    --proof-bg: #f8f8f8;
+    --proof-border: #94a3b8;
+    --example-bg: #f0fdf4;
+    --example-border: #15803d;
+    --chrome-width-sidebar: clamp(10rem, 18vw, 14rem);
+    --chrome-height-top: clamp(2rem, 4vh, 3rem);
+    --chrome-height-bottom: 0;
 }
 ```
 
 **Signature Elements:**
-- Two-panel vertical split
-- Accent bar on panel edge
-- Quote typography as hero element
-- Minimal, confident spacing
+- Left sidebar with section titles (vertical navigation)
+- Active section highlighted
+- Compact header with frame title
+- No footer bar (sidebar serves as navigation)
+- Section numbers in sidebar
 
 ---
 
-### 3. Creative Voltage
+### 3. Copenhagen
 
-**Vibe:** Bold, creative, energetic, retro-modern
+**Vibe:** Clean, minimal, professional
 
-**Layout:** Split panels—electric blue left, dark right. Script accents.
+**Layout:** Small rounded header block with section name, clean content area, subtle footer.
 
 **Typography:**
-- Display: `Syne` (700/800)
-- Mono: `Space Mono` (400/700)
+- Heading: `EB Garamond` (600)
+- Body: `EB Garamond` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-primary: #0066ff;
-    --bg-dark: #1a1a2e;
-    --accent-neon: #d4ff00;
-    --text-light: #ffffff;
+    --bg-primary: #ffffff;
+    --header-bg: #2d4a7a;
+    --header-fg: #ffffff;
+    --footer-bg: transparent;
+    --footer-fg: #718096;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --theorem-bg: #f0f5ff;
+    --theorem-border: #2d4a7a;
+    --definition-bg: #fef3c7;
+    --definition-border: #b45309;
+    --proof-bg: #fafafa;
+    --proof-border: #9ca3af;
+    --example-bg: #ecfdf5;
+    --example-border: #059669;
+    --chrome-height-top: clamp(2rem, 4vh, 3rem);
+    --chrome-height-bottom: clamp(1.2rem, 2.5vh, 2rem);
 }
 ```
 
 **Signature Elements:**
-- Electric blue + neon yellow contrast
-- Halftone texture patterns
-- Neon badges/callouts
-- Script typography for creative flair
+- Compact rounded header with section title
+- Thin rule below header
+- Clean, generous whitespace
+- Subtle frame number in bottom-right
 
 ---
 
-### 4. Dark Botanical
+### 4. Warsaw
 
-**Vibe:** Elegant, sophisticated, artistic, premium
+**Vibe:** Bold, authoritative, high-impact
 
-**Layout:** Centered content on dark. Abstract soft shapes in corner.
+**Layout:** Full-width gradient header bar, bold section markers, prominent footer.
 
 **Typography:**
-- Display: `Cormorant` (400/600) — elegant serif
-- Body: `IBM Plex Sans` (300/400)
+- Heading: `STIX Two Text` (700)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-primary: #0f0f0f;
-    --text-primary: #e8e4df;
-    --text-secondary: #9a9590;
-    --accent-warm: #d4a574;
-    --accent-pink: #e8b4b8;
-    --accent-gold: #c9b896;
+    --bg-primary: #ffffff;
+    --header-bg: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    --footer-bg: #1a365d;
+    --header-fg: #ffffff;
+    --footer-fg: #ffffff;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --theorem-bg: #e8eef8;
+    --theorem-border: #1a365d;
+    --definition-bg: #fef9c3;
+    --definition-border: #a16207;
+    --proof-bg: #f8f8f8;
+    --proof-border: #94a3b8;
+    --example-bg: #dcfce7;
+    --example-border: #16a34a;
+    --accent: #c53030;
+    --chrome-height-top: clamp(3rem, 6vh, 4.5rem);
+    --chrome-height-bottom: clamp(1.5rem, 3vh, 2.5rem);
 }
 ```
 
 **Signature Elements:**
-- Abstract soft gradient circles (blurred, overlapping)
-- Warm color accents (pink, gold, terracotta)
-- Thin vertical accent lines
-- Italic signature typography
-- **No illustrations—only abstract CSS shapes**
+- Gradient header bar (navy to blue)
+- Section title prominently displayed in header
+- Bold separator between header and content
+- Navigation dots in footer
+- Red accent for alerts/emphasis
 
 ---
 
-## Light Themes
+### 5. Metropolis
 
-### 5. Notebook Tabs
+**Vibe:** Modern, clean, contemporary academic — inspired by the Metropolis (mtheme) Beamer theme
 
-**Vibe:** Editorial, organized, elegant, tactile
-
-**Layout:** Cream paper card on dark background. Colorful tabs on right edge.
+**Layout:** Dark header bar, clean sans-serif throughout, orange progress indicator.
 
 **Typography:**
-- Display: `Bodoni Moda` (400/700) — classic editorial
-- Body: `DM Sans` (400/500)
+- Heading: `Fira Sans` (600)
+- Body: `Fira Sans` (400)
+- Mono: `Fira Code` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-outer: #2d2d2d;
-    --bg-page: #f8f6f1;
-    --text-primary: #1a1a1a;
-    --tab-1: #98d4bb; /* Mint */
-    --tab-2: #c7b8ea; /* Lavender */
-    --tab-3: #f4b8c5; /* Pink */
-    --tab-4: #a8d8ea; /* Sky */
-    --tab-5: #ffe6a7; /* Cream */
+    --bg-primary: #fafafa;
+    --header-bg: #23373b;
+    --footer-bg: #23373b;
+    --header-fg: #fafafa;
+    --footer-fg: #fafafa;
+    --text-primary: #23373b;
+    --text-secondary: #5a6872;
+    --accent: #eb811b;
+    --theorem-bg: #f5f0eb;
+    --theorem-border: #eb811b;
+    --definition-bg: #ebf5f0;
+    --definition-border: #23373b;
+    --proof-bg: #f5f5f5;
+    --proof-border: #8a9ba5;
+    --example-bg: #fdf6ec;
+    --example-border: #eb811b;
+    --chrome-height-top: clamp(2.5rem, 5vh, 3.5rem);
+    --chrome-height-bottom: clamp(1.2rem, 2.5vh, 2rem);
 }
 ```
 
 **Signature Elements:**
-- Paper container with subtle shadow
-- Colorful section tabs on right edge (vertical text)
-- Binder hole decorations on left
-- Tab text must scale with viewport: `font-size: clamp(0.5rem, 1vh, 0.7rem)`
+- Dark teal header/footer bars
+- Orange accent color (signature Metropolis)
+- Fira Sans typography (matches the real Metropolis)
+- Orange progress bar at top
+- Clean, modern feel distinct from traditional Beamer
 
 ---
 
-### 6. Pastel Geometry
+### 6. Classic Serif
 
-**Vibe:** Friendly, organized, modern, approachable
+**Vibe:** Traditional LaTeX, pure academic, mathematical
 
-**Layout:** White card on pastel background. Vertical pills on right edge.
+**Layout:** No chrome bars — pure content. Thin horizontal rules only. Centered frame titles.
 
 **Typography:**
-- Display: `Plus Jakarta Sans` (700/800)
-- Body: `Plus Jakarta Sans` (400/500)
+- Heading: `CMU Serif` / Latin Modern Roman (via CDN)
+- Body: `CMU Serif` / Latin Modern Roman
+- Mono: `CMU Typewriter Text` / Latin Modern Mono
+- Font URL: `https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/cmu-serif.css`
 
 **Colors:**
 ```css
 :root {
-    --bg-primary: #c8d9e6;
-    --card-bg: #faf9f7;
-    --pill-pink: #f0b4d4;
-    --pill-mint: #a8d4c4;
-    --pill-sage: #5a7c6a;
-    --pill-lavender: #9b8dc4;
-    --pill-violet: #7c6aad;
+    --bg-primary: #fffff8;
+    --header-bg: transparent;
+    --header-fg: #111111;
+    --footer-bg: transparent;
+    --footer-fg: #666666;
+    --text-primary: #111111;
+    --text-secondary: #444444;
+    --theorem-bg: #f5f5f0;
+    --theorem-border: #333333;
+    --definition-bg: #f0f5f0;
+    --definition-border: #2e5c3f;
+    --proof-bg: transparent;
+    --proof-border: #888888;
+    --example-bg: #f5f0f0;
+    --example-border: #5c2e2e;
+    --chrome-height-top: 0;
+    --chrome-height-bottom: clamp(1rem, 2vh, 1.5rem);
 }
 ```
 
 **Signature Elements:**
-- Rounded card with soft shadow
-- **Vertical pills on right edge** with varying heights (like tabs)
-- Consistent pill width, heights: short → medium → tall → medium → short
-- Download/action icon in corner
+- Computer Modern / Latin Modern fonts (authentic LaTeX typography)
+- No header bar — frame title serves as header
+- Thin horizontal rules as separators
+- Minimal frame number in bottom-right
+- Cream/off-white background for paper-like feel
+- This is the most "LaTeX-like" theme
 
 ---
 
-### 7. Split Pastel
+### 7. Cambridge
 
-**Vibe:** Playful, modern, friendly, creative
+**Vibe:** University formal, prestigious, ceremonial
 
-**Layout:** Two-color vertical split (peach left, lavender right).
+**Layout:** Green header bar with university-style crest area, gold accents.
 
 **Typography:**
-- Display: `Outfit` (700/800)
-- Body: `Outfit` (400/500)
+- Heading: `EB Garamond` (700)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-peach: #f5e6dc;
-    --bg-lavender: #e4dff0;
-    --text-dark: #1a1a1a;
-    --badge-mint: #c8f0d8;
-    --badge-yellow: #f0f0c8;
-    --badge-pink: #f0d4e0;
+    --bg-primary: #fffdf7;
+    --header-bg: #1e3a2f;
+    --footer-bg: #1e3a2f;
+    --header-fg: #d4af37;
+    --footer-fg: #d4af37;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a5568;
+    --accent: #d4af37;
+    --theorem-bg: #f0f5f2;
+    --theorem-border: #1e3a2f;
+    --definition-bg: #fdf8e8;
+    --definition-border: #8b6914;
+    --proof-bg: #f8f8f5;
+    --proof-border: #7a8a7f;
+    --example-bg: #eef5f0;
+    --example-border: #2d5a3f;
+    --chrome-height-top: clamp(2.5rem, 5vh, 4rem);
+    --chrome-height-bottom: clamp(1.5rem, 3vh, 2.5rem);
 }
 ```
 
 **Signature Elements:**
-- Split background colors
-- Playful badge pills with icons
-- Grid pattern overlay on right panel
-- Rounded CTA buttons
+- Forest green + gold color scheme
+- Space for university crest/logo in header
+- Gold accent lines
+- Formal, serif-heavy typography
+- Appropriate for thesis defense, inaugural lectures
 
 ---
 
-### 8. Vintage Editorial
+### 8. Lecture Notes
 
-**Vibe:** Witty, confident, editorial, personality-driven
+**Vibe:** Warm, approachable, pedagogical — like a professor's well-organized notes
 
-**Layout:** Centered content on cream. Abstract geometric shapes as accent.
+**Layout:** Warm background, generous spacing, large fonts for readability.
 
 **Typography:**
-- Display: `Fraunces` (700/900) — distinctive serif
-- Body: `Work Sans` (400/500)
+- Heading: `Source Serif 4` (700)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
 **Colors:**
 ```css
 :root {
-    --bg-cream: #f5f3ee;
-    --text-primary: #1a1a1a;
-    --text-secondary: #555;
-    --accent-warm: #e8d4c0;
+    --bg-primary: #faf6f0;
+    --header-bg: transparent;
+    --header-fg: #2d2d2d;
+    --footer-bg: transparent;
+    --footer-fg: #6b5b4f;
+    --text-primary: #2d2d2d;
+    --text-secondary: #6b5b4f;
+    --accent: #c0392b;
+    --theorem-bg: #fff8e1;
+    --theorem-border: #c0392b;
+    --definition-bg: #e8f5e9;
+    --definition-border: #2e7d32;
+    --proof-bg: #faf6f0;
+    --proof-border: #a0937e;
+    --example-bg: #e3f2fd;
+    --example-border: #1565c0;
+    --chrome-height-top: 0;
+    --chrome-height-bottom: clamp(1rem, 2vh, 1.5rem);
 }
 ```
 
 **Signature Elements:**
-- Abstract geometric shapes (circle outline + line + dot)
-- Bold bordered CTA boxes
-- Witty, conversational copy style
-- **No illustrations—only geometric CSS shapes**
+- Warm, parchment-like background
+- No header bar — open, spacious feel
+- Red accent for emphasis (like a professor's red pen)
+- Larger font sizes than other themes
+- Theorem boxes with warm yellow background
+- Friendly, inviting aesthetic for students
 
 ---
 
-## Specialty Themes
+### 9. Technical Report
 
-### 9. Neon Cyber
+**Vibe:** Dense, precise, engineering-focused
 
-**Vibe:** Futuristic, techy, confident
+**Layout:** Compact header, two-column-friendly, monospace accents.
 
-**Typography:** `Clash Display` + `Satoshi` (Fontshare)
+**Typography:**
+- Heading: `Source Serif 4` (600)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
-**Colors:** Deep navy (#0a0f1c), cyan accent (#00ffcc), magenta (#ff00aa)
+**Colors:**
+```css
+:root {
+    --bg-primary: #ffffff;
+    --header-bg: #2d3748;
+    --footer-bg: #2d3748;
+    --header-fg: #e2e8f0;
+    --footer-fg: #e2e8f0;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --accent: #3182ce;
+    --theorem-bg: #ebf8ff;
+    --theorem-border: #3182ce;
+    --definition-bg: #fefce8;
+    --definition-border: #a16207;
+    --proof-bg: #f7fafc;
+    --proof-border: #a0aec0;
+    --example-bg: #f0fff4;
+    --example-border: #38a169;
+    --chrome-height-top: clamp(2rem, 4vh, 3rem);
+    --chrome-height-bottom: clamp(1.2rem, 2.5vh, 2rem);
+}
+```
 
-**Signature:** Particle backgrounds, neon glow, grid patterns
+**Signature Elements:**
+- Compact layout maximizing content density
+- Blue accent color (IEEE/ACM style)
+- Monospace elements for code/algorithm emphasis
+- Two-column layout support (`.columns` class)
+- Good for data-heavy technical presentations
 
 ---
 
-### 10. Terminal Green
+### 10. Thesis Defense
 
-**Vibe:** Developer-focused, hacker aesthetic
+**Vibe:** Formal, authoritative, institution-ready
 
-**Typography:** `JetBrains Mono` (monospace only)
+**Layout:** Dark navy header with institution name, structured frame layout.
 
-**Colors:** GitHub dark (#0d1117), terminal green (#39d353)
+**Typography:**
+- Heading: `STIX Two Text` (700)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
-**Signature:** Scan lines, blinking cursor, code syntax styling
+**Colors:**
+```css
+:root {
+    --bg-primary: #ffffff;
+    --header-bg: #0d1b2a;
+    --footer-bg: #0d1b2a;
+    --header-fg: #e0e7ff;
+    --footer-fg: #e0e7ff;
+    --text-primary: #0d1b2a;
+    --text-secondary: #334155;
+    --accent: #1d4ed8;
+    --theorem-bg: #eff6ff;
+    --theorem-border: #1d4ed8;
+    --definition-bg: #fefce8;
+    --definition-border: #a16207;
+    --proof-bg: #f8fafc;
+    --proof-border: #94a3b8;
+    --example-bg: #f0fdf4;
+    --example-border: #16a34a;
+    --chrome-height-top: clamp(3rem, 6vh, 4.5rem);
+    --chrome-height-bottom: clamp(1.5rem, 3vh, 2.5rem);
+}
+```
+
+**Signature Elements:**
+- Dark navy bars (authority, formality)
+- Space for institution logo in header
+- Committee-friendly: clear frame structure
+- Prominent frame numbering
+- Blue accent throughout
 
 ---
 
-### 11. Swiss Modern
+### 11. Seminar
 
-**Vibe:** Clean, precise, Bauhaus-inspired
+**Vibe:** Informal, relaxed, discussion-oriented
 
-**Typography:** `Archivo` (800) + `Nunito` (400)
+**Layout:** Minimal chrome, light background, emphasis on readability.
 
-**Colors:** Pure white, pure black, red accent (#ff3300)
+**Typography:**
+- Heading: `EB Garamond` (500 italic)
+- Body: `EB Garamond` (400)
+- Mono: `Source Code Pro` (400)
 
-**Signature:** Visible grid, asymmetric layouts, geometric shapes
+**Colors:**
+```css
+:root {
+    --bg-primary: #fafaf8;
+    --header-bg: transparent;
+    --header-fg: #2d3436;
+    --footer-bg: transparent;
+    --footer-fg: #636e72;
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --accent: #6c5ce7;
+    --theorem-bg: #f3f0ff;
+    --theorem-border: #6c5ce7;
+    --definition-bg: #fef3f2;
+    --definition-border: #b91c1c;
+    --proof-bg: transparent;
+    --proof-border: #a1a1aa;
+    --example-bg: #f0f9ff;
+    --example-border: #0284c7;
+    --chrome-height-top: 0;
+    --chrome-height-bottom: clamp(0.8rem, 1.5vh, 1.2rem);
+}
+```
+
+**Signature Elements:**
+- No header bar — casual, open feel
+- Italic display headings (conversational)
+- Purple accent (informal, creative)
+- Minimal decoration
+- Very small footer with just frame number
+- Good for lab meetings, reading groups
 
 ---
 
-### 12. Paper & Ink
+### 12. Journal Article
 
-**Vibe:** Editorial, literary, thoughtful
+**Vibe:** Paper-like, mathematical, publication-quality
 
-**Typography:** `Cormorant Garamond` + `Source Serif 4`
+**Layout:** Two-column support, centered theorems, paper-like margins.
 
-**Colors:** Warm cream (#faf9f7), charcoal (#1a1a1a), crimson accent (#c41e3a)
+**Typography:**
+- Heading: `STIX Two Text` (600)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
 
-**Signature:** Drop caps, pull quotes, elegant horizontal rules
+**Colors:**
+```css
+:root {
+    --bg-primary: #ffffff;
+    --header-bg: transparent;
+    --header-fg: #000000;
+    --footer-bg: transparent;
+    --footer-fg: #666666;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --theorem-bg: #f8f8f8;
+    --theorem-border: #000000;
+    --definition-bg: #f0f0f0;
+    --definition-border: #333333;
+    --proof-bg: transparent;
+    --proof-border: #666666;
+    --example-bg: #f5f5f5;
+    --example-border: #444444;
+    --chrome-height-top: 0;
+    --chrome-height-bottom: clamp(1rem, 2vh, 1.5rem);
+}
+```
+
+**Signature Elements:**
+- Pure black + white (journal paper aesthetic)
+- Strong horizontal rules between sections
+- Two-column layout support
+- Centered, numbered theorem environments
+- Minimal — content is the design
+- AMS/Springer journal feel
 
 ---
 
 ## Font Pairing Quick Reference
 
-| Preset | Display Font | Body Font | Source |
-|--------|--------------|-----------|--------|
-| Bold Signal | Archivo Black | Space Grotesk | Google |
-| Electric Studio | Manrope | Manrope | Google |
-| Creative Voltage | Syne | Space Mono | Google |
-| Dark Botanical | Cormorant | IBM Plex Sans | Google |
-| Notebook Tabs | Bodoni Moda | DM Sans | Google |
-| Pastel Geometry | Plus Jakarta Sans | Plus Jakarta Sans | Google |
-| Split Pastel | Outfit | Outfit | Google |
-| Vintage Editorial | Fraunces | Work Sans | Google |
-| Neon Cyber | Clash Display | Satoshi | Fontshare |
-| Terminal Green | JetBrains Mono | JetBrains Mono | JetBrains |
+| Preset | Heading Font | Body Font | Mono Font | Source |
+|--------|-------------|-----------|-----------|--------|
+| Madrid | STIX Two Text (700) | STIX Two Text (400) | Source Code Pro | Google Fonts |
+| Berlin | Source Serif 4 (600) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Copenhagen | EB Garamond (600) | EB Garamond (400) | Source Code Pro | Google Fonts |
+| Warsaw | STIX Two Text (700) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Metropolis | Fira Sans (600) | Fira Sans (400) | Fira Code | Google Fonts |
+| Classic Serif | CMU Serif | CMU Serif | CMU Typewriter Text | jsDelivr CDN |
+| Cambridge | EB Garamond (700) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Lecture Notes | Source Serif 4 (700) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Technical Report | Source Serif 4 (600) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Thesis Defense | STIX Two Text (700) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Seminar | EB Garamond (500i) | EB Garamond (400) | Source Code Pro | Google Fonts |
+| Journal Article | STIX Two Text (600) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
 
 ---
 
-## DO NOT USE (Generic AI Patterns)
+## DO NOT USE (Generic / Non-Academic Patterns)
 
-**Fonts:** Inter, Roboto, Arial, system fonts as display
+**Fonts:** Calibri, Arial, Comic Sans, display/decorative fonts (Archivo Black, Syne, Clash Display). No sans-serif as the sole body font except in Metropolis.
 
-**Colors:** `#6366f1` (generic indigo), purple gradients on white
+**Colors:** Neon accents (#00ffcc, #d4ff00, #ff00aa), pure saturated backgrounds, electric blue (#0066ff), gradient meshes.
 
-**Layouts:** Everything centered, generic hero sections, identical card grids
+**Layouts:** Centered-only with no frame structure. Floating abstract blobs. Asymmetric "creative" layouts. Everything on dark backgrounds (except Lecture Notes optional dark mode).
 
-**Decorations:** Realistic illustrations, gratuitous glassmorphism, drop shadows without purpose
+**Animations:** Scale transitions, slide-from-left/right, blur effects, particle systems, 3D tilt, custom cursors. Academic slides use opacity fade ONLY (200-300ms).
+
+**Decorations:** Abstract gradient shapes, halftone textures, neon glow box-shadows, noise textures. Academic slides use horizontal rules, theorem box borders, and structural chrome only.
 
 ---
 
-## Troubleshooting Viewport Issues
+## Troubleshooting
 
-### Content Overflows the Slide
+### KaTeX Equations Not Rendering
 
-**Symptoms:** Scrollbar appears, content cut off, elements outside viewport
+**Symptoms:** Raw LaTeX source visible instead of rendered math.
 
 **Solutions:**
-1. Check slide has `overflow: hidden` (not `overflow: auto` or `visible`)
-2. Reduce content — split into multiple slides
-3. Ensure all fonts use `clamp()` not fixed `px` or `rem`
-4. Add/fix height breakpoints for smaller screens
-5. Check images have `max-height: min(50vh, 400px)`
+1. Verify KaTeX CSS and JS CDN links are included in `<head>`
+2. Check delimiter configuration (`$...$` for inline, `$$...$$` for display)
+3. Ensure KaTeX auto-render script runs after DOM load
+4. Verify no CSP (Content Security Policy) blocks the CDN
+
+### Computer Modern Fonts Not Loading
+
+**Symptoms:** Fallback serif font (Georgia/Times) appears instead of CMU Serif.
+
+**Solutions:**
+1. Check jsDelivr CDN link: `https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/cmu-serif.css`
+2. Add fallback chain: `font-family: 'CMU Serif', 'Latin Modern Roman', 'Georgia', serif;`
+3. Test with browser DevTools Network tab to confirm font files load
+4. If CDN is blocked, consider self-hosting the WOFF2 files
+
+### Theorem Box Overflows Frame
+
+**Symptoms:** Theorem or proof content extends beyond the frame boundary.
+
+**Solutions:**
+1. Reduce content within the box (max 4 lines for theorem, 5 for proof)
+2. Split into multiple frames: "Theorem" frame + "Proof" frame
+3. Verify `max-height: min(40vh, 350px)` is set on theorem boxes
+4. Check that `overflow: hidden` is on the `.frame` element
+
+### Frame Numbering Incorrect
+
+**Symptoms:** Frame counter shows wrong numbers or does not update.
+
+**Solutions:**
+1. Check JS frame counter initialization (should count `.frame` elements)
+2. Verify `querySelectorAll('.frame')` matches all frame sections
+3. Ensure the counter updates on scroll/navigation events
+4. Check for duplicate frame IDs or missing frame elements
+
+### Header/Footer Bars Overlapping Content
+
+**Symptoms:** Frame chrome covers frame content text.
+
+**Solutions:**
+1. Verify `--chrome-height-top` and `--chrome-height-bottom` variables match actual bar heights
+2. Add matching `padding-top` / `padding-bottom` to `.frame-content`
+3. For Berlin sidebar: ensure content area has `margin-left: var(--chrome-width-sidebar)`
+4. Test at multiple viewport heights — chrome heights should use `clamp()`
+
+### Two-Column Layout Collapsing
+
+**Symptoms:** `.columns` layout stacks vertically on wider screens or overflows.
+
+**Solutions:**
+1. Check `min-width` on column children is not too large
+2. Verify the 600px responsive breakpoint is present
+3. Ensure `.columns` has `gap` using `clamp()` not fixed pixels
+4. Test with varying content lengths in both columns
 
 ### Text Too Small on Mobile / Too Large on Desktop
 
-**Symptoms:** Unreadable text on phones, oversized text on big screens
+**Symptoms:** Unreadable text on phones, oversized text on big screens.
 
 **Solutions:**
 ```css
 /* Use clamp with viewport-relative middle value */
 font-size: clamp(1rem, 3vw, 2.5rem);
-/*              ↑       ↑      ↑
+/*              ^       ^      ^
             minimum  scales  maximum */
 ```
 
 ### Content Doesn't Fill Short Screens
 
-**Symptoms:** Excessive whitespace on landscape phones or short browser windows
+**Symptoms:** Excessive whitespace on landscape phones or short browser windows.
 
 **Solutions:**
 1. Add `@media (max-height: 600px)` and `(max-height: 500px)` breakpoints
 2. Reduce padding at smaller heights
-3. Hide decorative elements (`display: none`)
-4. Consider hiding nav dots and hints on short screens
+3. Hide non-essential chrome (`display: none` on `.frame-nav`, `.decorative`)
+4. Verify frame header/footer bars shrink appropriately via `clamp()`
 
 ### Testing Recommendations
 
 Test at these viewport sizes:
-- **Desktop:** 1920×1080, 1440×900, 1280×720
-- **Tablet:** 1024×768 (landscape), 768×1024 (portrait)
-- **Mobile:** 375×667 (iPhone SE), 414×896 (iPhone 11)
-- **Landscape phone:** 667×375, 896×414
+- **Desktop:** 1920x1080, 1440x900, 1280x720
+- **Tablet:** 1024x768 (landscape), 768x1024 (portrait)
+- **Mobile:** 375x667 (iPhone SE), 414x896 (iPhone 11)
+- **Landscape phone:** 667x375, 896x414
 
 Use browser DevTools responsive mode to quickly test multiple sizes.

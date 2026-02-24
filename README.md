@@ -1,18 +1,23 @@
-# Frontend Slides
+# Academic Slides
 
-A Claude Code skill for creating stunning, animation-rich HTML presentations — from scratch or by converting PowerPoint files.
+A Claude Code skill for creating publication-quality academic presentations with LaTeX/Beamer-inspired typography, theorem environments, and equation rendering — all in a single, zero-dependency HTML file.
 
 ## What This Does
 
-**Frontend Slides** helps non-designers create beautiful web presentations without knowing CSS or JavaScript. It uses a "show, don't tell" approach: instead of asking you to describe your aesthetic preferences in words, it generates visual previews and lets you pick what you like.
+**Academic Slides** helps researchers, educators, and students create professional academic presentations without wrestling with LaTeX compilation or PowerPoint formatting. It uses a "show, don't tell" approach: instead of asking you to describe aesthetic preferences in words, it generates visual theme previews and lets you pick what fits your work.
 
 ### Key Features
 
-- **Zero Dependencies** — Single HTML files with inline CSS/JS. No npm, no build tools, no frameworks.
-- **Visual Style Discovery** — Can't articulate design preferences? No problem. Pick from generated visual previews.
-- **PPT Conversion** — Convert existing PowerPoint files to web, preserving all images and content.
-- **Anti-AI-Slop** — Curated distinctive styles that avoid generic AI aesthetics (bye-bye, purple gradients on white).
-- **Production Quality** — Accessible, responsive, well-commented code you can customize.
+- **Zero Build Dependencies** — Single HTML files with inline CSS/JS. KaTeX loaded via CDN for equations.
+- **Beamer-Inspired Themes** — 12 academic themes based on classic Beamer aesthetics (Madrid, Berlin, Copenhagen, Metropolis, etc.)
+- **Theorem Environments** — Semantic `.theorem-box`, `.proof-box`, `.definition-box`, `.lemma-box`, `.corollary-box`, `.example-box` with proper styling and QED markers.
+- **Equation Rendering** — KaTeX for inline ($...$) and display ($$...$$) mathematics.
+- **Academic Typography** — Computer Modern, Latin Modern, STIX Two, EB Garamond, Source Serif — real academic fonts, not web-design fonts.
+- **Progressive Disclosure** — Beamer `\pause` equivalent: reveal content step-by-step within a frame.
+- **Frame Numbering** — Beamer-style header/footer bars with section titles, author, and "Frame X of Y."
+- **Visual Theme Discovery** — Can't choose? Generate 3 theme previews and pick your favorite.
+- **PPT Conversion** — Convert existing PowerPoint files to web presentations preserving content.
+- **Production Quality** — Accessible, responsive, well-commented code.
 
 ## Installation
 
@@ -22,19 +27,19 @@ Copy the skill files to your Claude Code skills directory:
 
 ```bash
 # Create the skill directory
-mkdir -p ~/.claude/skills/frontend-slides
+mkdir -p ~/.claude/skills/academic-slides
 
 # Copy the files (or download from this repo)
-cp SKILL.md ~/.claude/skills/frontend-slides/
-cp STYLE_PRESETS.md ~/.claude/skills/frontend-slides/
+cp SKILL.md ~/.claude/skills/academic-slides/
+cp STYLE_PRESETS.md ~/.claude/skills/academic-slides/
 ```
 
-Then use it by typing `/frontend-slides` in Claude Code.
+Then use it by typing `/academic-slides` in Claude Code.
 
 ### Manual Download
 
 1. Download `SKILL.md` and `STYLE_PRESETS.md` from this repo
-2. Place them in `~/.claude/skills/frontend-slides/`
+2. Place them in `~/.claude/skills/academic-slides/`
 3. Restart Claude Code
 
 ## Usage
@@ -42,49 +47,50 @@ Then use it by typing `/frontend-slides` in Claude Code.
 ### Create a New Presentation
 
 ```
-/frontend-slides
-
-> "I want to create a pitch deck for my AI startup"
+/academic-slides
+> "I need slides for my ICML 2026 talk on attention mechanisms"
 ```
 
 The skill will:
-1. Ask about your content (slides, messages, images)
-2. Ask about the feeling you want (impressed? excited? calm?)
-3. Generate 3 visual style previews for you to compare
-4. Create the full presentation in your chosen style
+1. Ask about your content (theorems, equations, algorithms, citations)
+2. Ask about your presentation context (conference, lecture, seminar, defense)
+3. Generate 3 Beamer-inspired theme previews
+4. Create the full presentation with theorem environments and equation support
 5. Open it in your browser
 
-### Convert a PowerPoint
+### More Examples
 
 ```
-/frontend-slides
-
-> "Convert my presentation.pptx to a web slideshow"
+/academic-slides
+> "Create lecture slides for my algorithms course on graph theory"
 ```
 
-The skill will:
-1. Extract all text, images, and notes from your PPT
-2. Show you the extracted content for confirmation
-3. Let you pick a visual style
-4. Generate an HTML presentation with all your original assets
+```
+/academic-slides
+> "Convert my research-talk.pptx to web slides with proper math rendering"
+```
 
 ## Included Styles
 
-### Dark Themes
-- **Neon Cyber** — Futuristic, techy, particle effects
-- **Midnight Executive** — Premium, corporate, trustworthy
-- **Deep Space** — Cinematic, inspiring, vast
-- **Terminal Green** — Developer-focused, hacker aesthetic
+### Classic Beamer Themes
+- **Madrid** — Classic Beamer, blue header/footer bars, serif fonts
+- **Berlin** — Sidebar navigation, structured sections
+- **Copenhagen** — Clean minimal header, professional
+- **Warsaw** — Bold gradient bars, authoritative
 
-### Light Themes
-- **Paper & Ink** — Editorial, literary, refined
-- **Swiss Modern** — Clean, Bauhaus-inspired, geometric
-- **Soft Pastel** — Friendly, playful, creative
-- **Warm Editorial** — Magazine-style, photographic
+### Modern Academic
+- **Metropolis** — Modern sans-serif, orange accent (mtheme-inspired)
+- **Technical Report** — Engineering/CS style, compact, blue accent
 
-### Specialty
-- **Brutalist** — Raw, bold, attention-grabbing
-- **Gradient Wave** — Modern SaaS aesthetic
+### Traditional/Formal
+- **Classic Serif** — Pure LaTeX Computer Modern look, minimal chrome
+- **Cambridge** — University formal, forest green + gold
+- **Thesis Defense** — Dark navy, institution-ready
+- **Journal Article** — Paper-style, black + white, AMS feel
+
+### Pedagogical
+- **Lecture Notes** — Warm, approachable, large fonts
+- **Seminar** — Informal, relaxed, discussion-oriented
 
 ## Output Example
 
@@ -94,20 +100,50 @@ Each presentation is a single, self-contained HTML file:
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Fonts, CSS variables, all styles inline -->
+    <!-- KaTeX for equations, Computer Modern fonts -->
 </head>
 <body>
-    <section class="slide title-slide">
-        <h1 class="reveal">Your Title</h1>
+    <header class="frame-header">
+        <span class="short-title">Attention Mechanisms</span>
+        <span class="section-title">Main Results</span>
+    </header>
+
+    <section class="frame title-frame">
+        <div class="frame-content">
+            <h1 class="reveal">On the Convergence of Transformer Attention</h1>
+            <p class="reveal subtitle">ICML 2026</p>
+            <div class="author-block reveal">
+                <p class="author">Jane Smith</p>
+                <p class="institute">MIT CSAIL</p>
+                <p class="date">July 2026</p>
+            </div>
+        </div>
     </section>
 
-    <section class="slide">
-        <h2 class="reveal">Slide Content</h2>
+    <section class="frame">
+        <div class="frame-content">
+            <h2 class="reveal">Main Theorem</h2>
+            <div class="theorem-box reveal">
+                <span class="env-title">Theorem 1 (Convergence)</span>
+                <p>For attention weights $\alpha_{ij} = \text{softmax}(q_i^\top k_j / \sqrt{d})$,
+                the output converges as $$\lim_{d \to \infty} \text{Attn}(Q,K,V) = V^*$$</p>
+            </div>
+            <div class="proof-box reveal">
+                <span class="env-title">Proof sketch.</span>
+                <p>By concentration of measure on the unit sphere...</p>
+            </div>
+        </div>
     </section>
 
-    <!-- Navigation: Arrow keys, scroll, swipe, or click dots -->
+    <footer class="frame-footer">
+        <span class="author-short">J. Smith</span>
+        <span class="title-short">Transformer Convergence</span>
+        <span class="frame-number">7 / 23</span>
+    </footer>
+
     <script>
-        // SlidePresentation controller, animations, interactions
+        // AcademicPresentation: keyboard nav, frame counter,
+        // progressive disclosure (pause), KaTeX auto-render
     </script>
 </body>
 </html>
@@ -116,42 +152,44 @@ Each presentation is a single, self-contained HTML file:
 Features included:
 - Keyboard navigation (arrows, space)
 - Touch/swipe support
-- Mouse wheel scrolling
-- Progress bar
-- Navigation dots
-- Scroll-triggered animations
-- Responsive design
+- Frame numbering and progress bar
+- KaTeX equation rendering (inline and display)
+- Theorem/proof/definition environments
+- Progressive disclosure (Beamer \pause equivalent)
+- Responsive design with viewport fitting
 - Reduced motion support
+- Beamer-style header/footer bars
 
 ## Philosophy
 
-This skill was born from the belief that:
+1. **Academic rigor comes first.** Beautiful slides don't make bad research good, but sloppy formatting undermines credible work.
 
-1. **You don't need to be a designer to make beautiful things.** You just need to react to what you see.
+2. **Content over flash.** Slides support your talk, not distract from it. Clean typography and minimal animation.
 
-2. **Dependencies are debt.** A single HTML file will work in 10 years. A React project from 2019? Good luck.
+3. **You don't need to be a typographer.** Beamer-inspired themes are opinionated so you can focus on theorems and equations, not CSS.
 
-3. **Generic is forgettable.** Every presentation should feel custom-crafted, not template-generated.
+4. **Zero friction.** Single HTML file. No LaTeX compilation. Open in browser, present anywhere.
 
-4. **Comments are kindness.** Code should explain itself to future-you (or anyone else who opens it).
+5. **Comments are kindness.** Code explains how to customize colors, fonts, and theorem styling.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Main skill instructions for Claude Code |
-| `STYLE_PRESETS.md` | Reference file with 10 curated visual styles |
+| `STYLE_PRESETS.md` | Reference file with 12 curated academic themes |
 
 ## Requirements
 
 - [Claude Code](https://claude.ai/claude-code) CLI
 - For PPT conversion: Python with `python-pptx` library
+- KaTeX loaded automatically via CDN in generated HTML
 
 ## Credits
 
-Created by [@zarazhangrui](https://github.com/zarazhangrui) with Claude Code.
+Inspired by [frontend-slides](https://github.com/zarazhangrui/frontend-slides) by [@zarazhangrui](https://github.com/zarazhangrui).
 
-Inspired by the "Vibe Coding" philosophy — building beautiful things without being a traditional software engineer.
+Built on top of the Beamer LaTeX package philosophy — because academic presentations deserve proper typesetting even outside LaTeX.
 
 ## License
 
