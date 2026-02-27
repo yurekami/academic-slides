@@ -243,6 +243,109 @@ img, .image-container {
 }
 ```
 
+### Progressive Disclosure & Overlay System
+
+Presentations support two disclosure mechanisms:
+
+#### Linear Reveals (`.reveal` class)
+
+Elements with class `reveal` appear sequentially as the presenter advances. They start hidden and appear one-by-one in DOM order.
+
+```css
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+```
+
+```html
+<p class="reveal">This appears first</p>
+<p class="reveal">This appears second</p>
+<p class="reveal">This appears third</p>
+```
+
+#### Non-Linear Overlays (`data-overlay` attribute)
+
+For more complex animations — elements that appear and disappear at specific steps, or side-by-side sync — use the `data-overlay` attribute. This is inspired by Beamer's overlay specifications and TeXmacs' overlay system.
+
+**Syntax:** `data-overlay="<spec>"` where `<spec>` is one of:
+- `"3"` — visible only on step 3
+- `"2-"` — visible from step 2 onward
+- `"-4"` — visible on steps 1 through 4
+- `"2-5"` — visible on steps 2 through 5
+- `"1,3,5"` — visible on steps 1, 3, and 5
+
+Overlay elements start hidden. The frame's total step count is the maximum step number referenced by any `data-overlay` or `reveal` within that frame.
+
+```html
+<!-- Image appears on step 2, stays visible -->
+<img src="diagram.svg" data-overlay="2-" />
+
+<!-- Text visible only on steps 1-2, then disappears -->
+<p data-overlay="-2">Before the key insight...</p>
+
+<!-- Text replaces the above on step 3 -->
+<p data-overlay="3-">After the key insight!</p>
+
+<!-- Synced side-by-side: both appear on step 2 -->
+<div class="flex-row">
+  <p data-overlay="2-">Explanation text</p>
+  <img data-overlay="2-" src="figure.png" />
+</div>
+```
+
+**Implementation:** The `AcademicPresentation` JS class parses `data-overlay` attributes and evaluates visibility at each step. Elements use the same `.visible` CSS class as linear reveals.
+
+**Mixing reveals and overlays:** Within a single frame, you can use both. Linear `.reveal` elements are assigned incrementing step numbers (1, 2, 3...). Overlay elements reference explicit step numbers. The frame advances through `max(highest_reveal_step, highest_overlay_step)` total steps.
+
+### Print / Handout Mode
+
+Every presentation includes a `@media print` stylesheet that transforms the slide deck into a vertical handout suitable for printing or PDF export (Ctrl+P / Cmd+P).
+
+**What print mode does:**
+- Removes `scroll-snap` and `100vh` height constraints
+- Lays out all frames vertically with page breaks between them
+- Hides navigation UI (frame numbers, keyboard hints)
+- Reveals all `.reveal` and `data-overlay` elements (no progressive disclosure on paper)
+- Adjusts typography for print: black text on white, no accent decorations
+- Forces `break-after: page` on each `.frame` for clean page boundaries
+
+**Required CSS:**
+
+```css
+@media print {
+    html { scroll-snap-type: none; scroll-behavior: auto; }
+    body { background: white; color: black; }
+
+    .frame {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        scroll-snap-align: unset;
+        break-after: page;
+        page-break-after: always;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 2rem;
+    }
+
+    .frame::before { display: none; } /* Remove accent lines */
+    .frame-footer { display: none; } /* Remove frame numbers */
+
+    /* Show all reveals and overlays */
+    .reveal, [data-overlay] { 
+        opacity: 1 !important; 
+        transform: none !important;
+        display: block !important;
+    }
+
+    /* Remove animations */
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+```
+
+**Usage:** Tell users: "Press Ctrl+P (or Cmd+P on Mac) to print or save as PDF. All slides will appear as a vertical handout."
+
 ### Overflow Prevention Checklist
 
 Before generating any presentation, mentally verify:
