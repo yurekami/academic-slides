@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepSeek-V3.2 — Academic Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css">
+  <style>
+    :root {
+      --bg-primary: #fcfcfa;
+      --header-bg: transparent;
+      --header-fg: #303030;
+      --footer-bg: transparent;
+      --footer-fg: #aaaaaa;
+      --text-primary: #303030;
+      --text-secondary: #757575;
+      --accent: #c27528;
+      --theorem-bg: #faf6ee;
+      --theorem-border: #c27528;
+      --definition-bg: #eef3f8;
+      --definition-border: #4a7a9b;
+      --proof-bg: transparent;
+      --proof-border: #d0d0d0;
+      --example-bg: #f0f5ee;
+      --example-border: #5a8a5a;
+      --chrome-height-top: 0;
+      --chrome-height-bottom: clamp(0.8rem, 1.5vh, 1.2rem);
+      --frame-padding: clamp(1.5rem, 6vw, 6rem);
+      --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-body: 'Source Serif 4', 'Georgia', serif;
+      --font-mono: 'Source Code Pro', 'Courier New', monospace;
+      --small-size: clamp(0.65rem, 1.2vw, 0.85rem);
+      --body-size: clamp(0.85rem, 1.8vw, 1.15rem);
+      --h2-size: clamp(1.3rem, 3vw, 2rem);
+      --h1-size: clamp(1.8rem, 4.5vw, 3rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: var(--body-size); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+
+    .frame {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent);
+      z-index: 101;
+    }
+
+    .frame-content {
+      flex: 1;
+      padding: var(--frame-padding);
+      padding-top: calc(var(--frame-padding) + 4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .frame-footer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: var(--chrome-height-bottom);
+      padding: 0 var(--frame-padding);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .frame-number {
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      color: #aaaaaa;
+    }
+
+    h1 { font-family: var(--font-heading); font-size: var(--h1-size); font-weight: 500; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.2; margin-bottom: clamp(0.5rem, 2vw, 1.5rem); }
+    h2 { font-family: var(--font-heading); font-size: var(--h2-size); font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); line-height: 1.3; margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+    h3 { font-family: var(--font-heading); font-size: clamp(1rem, 2vw, 1.3rem); font-weight: 500; color: var(--text-primary); margin-bottom: 0.5rem; }
+    p { margin-bottom: 0.75em; }
+    code { font-family: var(--font-mono); font-size: 0.9em; background: rgba(0,0,0,0.04); padding: 0.15em 0.35em; border-radius: 3px; }
+    strong { font-weight: 600; }
+
+    ul, ol { margin: 0.5em 0; padding-left: 1.5em; }
+    li { margin-bottom: 0.4em; position: relative; list-style: none; padding-left: 1em; }
+    li::before { content: '\2022'; color: var(--accent); font-weight: 700; position: absolute; left: 0; }
+    ol { counter-reset: item; }
+    ol li { counter-increment: item; }
+    ol li::before { content: counter(item) '.'; color: var(--accent); font-weight: 600; }
+
+    .theorem-box, .definition-box, .example-box {
+      border-left: 3px solid;
+      padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.75rem, 2vw, 1.5rem);
+      margin: 0.75em 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .theorem-box { background: var(--theorem-bg); border-color: var(--theorem-border); }
+    .definition-box { background: var(--definition-bg); border-color: var(--definition-border); }
+    .example-box { background: var(--example-bg); border-color: var(--example-border); }
+    .box-label { font-family: var(--font-heading); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em; }
+
+    .reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .section-frame .frame-content { justify-content: center; align-items: center; text-align: center; }
+    .section-frame .frame-content::before { content: ''; display: block; width: 60px; height: 1px; background: #d0d0d0; margin: 0 auto clamp(0.75rem, 2vw, 1.5rem); }
+
+    .title-frame .frame-content { justify-content: center; align-items: center; text-align: center; }
+    .title-frame .subtitle { font-family: var(--font-body); font-size: clamp(0.9rem, 2vw, 1.2rem); color: var(--text-secondary); margin-top: 0.5rem; }
+    .title-frame .authors { font-family: var(--font-body); font-size: var(--body-size); color: var(--text-secondary); margin-top: 1rem; }
+    .title-frame .date { font-family: var(--font-mono); font-size: var(--small-size); color: #aaaaaa; margin-top: 0.5rem; }
+
+    table { border-collapse: collapse; width: 100%; margin: 0.75em 0; font-size: 0.9em; }
+    th, td { padding: 0.4em 0.75em; text-align: left; border-bottom: 1px solid #e0e0e0; }
+    th { font-family: var(--font-heading); font-weight: 500; color: var(--text-primary); border-bottom: 2px solid var(--accent); }
+    tr:last-child td { border-bottom: none; }
+
+    .flex-row { display: flex; gap: 1.5rem; }
+    .flex-row > * { flex: 1; }
+
+    @media (max-height: 700px) { :root { --body-size: clamp(0.75rem, 1.5vw, 1rem); --h2-size: clamp(1.1rem, 2.5vw, 1.6rem); --frame-padding: clamp(1rem, 4vw, 3rem); } }
+    @media (max-height: 500px) { :root { --body-size: clamp(0.65rem, 1.2vw, 0.85rem); --h2-size: clamp(0.95rem, 2vw, 1.3rem); --frame-padding: clamp(0.75rem, 3vw, 2rem); } }
+    @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } html { scroll-behavior: auto; } }
+
+    .katex { font-size: 1.05em; }
+    .katex-display { margin: 0.75em 0; overflow-x: auto; overflow-y: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- Frame 1: Title -->
+  <section class="frame title-frame" id="frame-1">
+    <div class="frame-content">
+      <h1>DeepSeek-V3.2</h1>
+      <p class="subtitle">Pushing the Frontier of Open Large Language Models</p>
+      <p class="authors">DeepSeek-AI</p>
+      <p class="date">December 2025 · arXiv:2512.02556</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">1</span></div>
+  </section>
+
+  <!-- Frame 2: The Open-Source Gap -->
+  <section class="frame" id="frame-2">
+    <div class="frame-content">
+      <h2>The Open-Source Gap</h2>
+      <p class="reveal">Recent reasoning models (o-series, Gemini) have dramatically widened the gap between proprietary and open-source LLMs.</p>
+      <p class="reveal">Three critical deficiencies in open models:</p>
+      <div class="definition-box reveal">
+        <div class="box-label">Key Deficiencies</div>
+        <ol>
+          <li>No efficient long-context architecture — standard attention scales $O(L^2)$</li>
+          <li>No scalable reinforcement learning — RL typically limited to &lt;1% of pre-training compute</li>
+          <li>No agentic capabilities — poor tool use, multi-step reasoning</li>
+        </ol>
+      </div>
+    </div>
+    <div class="frame-footer"><span class="frame-number">2</span></div>
+  </section>
+
+  <!-- Frame 3: Three Key Contributions -->
+  <section class="frame" id="frame-3">
+    <div class="frame-content">
+      <h2>Three Key Contributions</h2>
+      <div class="theorem-box reveal">
+        <div class="box-label">Architecture</div>
+        <p>Dynamic Sparse Attention (DSA) — reduces attention from $O(L^2)$ to $O(Lk)$ with hardware-aligned sparsity.</p>
+      </div>
+      <div class="theorem-box reveal">
+        <div class="box-label">Training</div>
+        <p>Scalable RL — GRPO consuming &gt;10% of pre-training compute, with innovations for stability at scale.</p>
+      </div>
+      <div class="theorem-box reveal">
+        <div class="box-label">Capability</div>
+        <p>Agentic Task Synthesis — 1,800+ environments, 85K+ prompts for tool-use and multi-step agent training.</p>
+      </div>
+    </div>
+    <div class="frame-footer"><span class="frame-number">3</span></div>
+  </section>
+
+  <!-- Frame 4: Dynamic Sparse Attention -->
+  <section class="frame" id="frame-4">
+    <div class="frame-content">
+      <h2>Dynamic Sparse Attention</h2>
+      <p>A two-component system that replaces full attention for long contexts:</p>
+      <h3 class="reveal">Lightning Indexer</h3>
+      <p class="reveal">Lightweight scoring module that estimates token relevance in $O(L)$:</p>
+      <div class="reveal">$$I_{t,s} = \sum_{j=1}^{H^I} w_{t,j}^I \cdot \mathrm{ReLU}\!\bigl(\mathbf{q}_{t,j}^I \cdot \mathbf{k}_{s}^I\bigr)$$</div>
+      <p class="reveal">Where $H^I$ attention heads produce importance scores for each source position $s$ relative to target $t$.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">4</span></div>
+  </section>
+
+  <!-- Frame 5: Fine-Grained Token Selection -->
+  <section class="frame" id="frame-5">
+    <div class="frame-content">
+      <h2>Fine-Grained Token Selection</h2>
+      <p class="reveal">The DSA attention output uses only the top-$k$ tokens selected by the indexer:</p>
+      <div class="reveal">$$\mathbf{u}_t = \mathrm{Attn}\!\bigl(\mathbf{h}_t,\; \{\mathbf{c}_s \mid I_{t,s} \in \mathrm{Top}\text{-}k(I_{t,:})\}\bigr)$$</div>
+      <div class="definition-box reveal">
+        <div class="box-label">Training Strategy</div>
+        <p>Stage 1: 2.1B tokens — pre-fill training to align indexer with full attention.</p>
+        <p>Stage 2: 943.7B tokens — decoding training with $k = 1{,}024$ selected tokens per query.</p>
+      </div>
+      <p class="reveal">Hardware-aligned: selects contiguous pages of 64 tokens for efficient GPU memory access.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">5</span></div>
+  </section>
+
+  <!-- Frame 6: Inference Cost Reduction -->
+  <section class="frame" id="frame-6">
+    <div class="frame-content">
+      <h2>Inference Cost Reduction</h2>
+      <p>DSA delivers up to 3× cheaper inference at 128K context with no quality loss.</p>
+      <div class="reveal">
+        <table>
+          <thead>
+            <tr><th>Benchmark</th><th>Full Attention</th><th>DSA ($k$=1024)</th><th>DSA ($k$=2048)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>RULER-128K</td><td>90.9</td><td>90.2</td><td>91.1</td></tr>
+            <tr><td>NIAH-128K</td><td>99.7</td><td>99.3</td><td>99.5</td></tr>
+            <tr><td>LongBench-v2</td><td>52.7</td><td>50.3</td><td>52.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="example-box reveal">
+        <div class="box-label">Key Insight</div>
+        <p>The Lightning Indexer runs in FP8 precision, adding negligible overhead while enabling massive KV-cache savings.</p>
+      </div>
+    </div>
+    <div class="frame-footer"><span class="frame-number">6</span></div>
+  </section>
+
+  <!-- Frame 7: Scaling GRPO -->
+  <section class="frame" id="frame-7">
+    <div class="frame-content">
+      <h2>Scaling Reinforcement Learning</h2>
+      <p>Group Relative Policy Optimization (GRPO) at unprecedented scale — over 10% of pre-training compute.</p>
+      <div class="reveal">$$J(\theta) = \mathbb{E}_{q \sim \mathcal{D},\, \{o_i\} \sim \pi_{\theta_{\text{old}}}}\!\Bigl[\frac{1}{G}\sum_{i=1}^{G} \min\!\bigl(r_i \hat{A}_i,\;\mathrm{clip}(r_i, 1\!-\!\epsilon, 1\!+\!\epsilon)\,\hat{A}_i\bigr)\Bigr]$$</div>
+      <h3 class="reveal">Four Key Innovations</h3>
+      <ul>
+        <li class="reveal">Unbiased KL estimation — avoids systematic underestimation of divergence</li>
+        <li class="reveal">Off-policy importance weight masking — clips stale samples</li>
+        <li class="reveal">Keep routing — freezes MoE routing during RL to prevent expert collapse</li>
+        <li class="reveal">Keep sampling mask — prevents degenerate length exploitation</li>
+      </ul>
+    </div>
+    <div class="frame-footer"><span class="frame-number">7</span></div>
+  </section>
+
+  <!-- Frame 8: Thinking in Tool-Use -->
+  <section class="frame" id="frame-8">
+    <div class="frame-content">
+      <h2>Thinking in Tool-Use</h2>
+      <p>Integrating chain-of-thought reasoning with function calling for multi-step agent tasks.</p>
+      <div class="theorem-box reveal">
+        <div class="box-label">Context Management</div>
+        <p>Long tool outputs (&gt;2,000 tokens) are dynamically summarized to prevent context window exhaustion during extended reasoning chains.</p>
+      </div>
+      <div class="definition-box reveal">
+        <div class="box-label">Cold-Start Mechanism</div>
+        <p>RL begins from a supervised baseline — the model first learns tool-use patterns from curated demonstrations before optimization.</p>
+      </div>
+      <p class="reveal">Result: seamless interleaving of $\langle\text{think}\rangle$ reasoning blocks with $\langle\text{tool\_call}\rangle$ actions.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">8</span></div>
+  </section>
+
+  <!-- Frame 9: Agentic Task Synthesis -->
+  <section class="frame" id="frame-9">
+    <div class="frame-content">
+      <h2>Agentic Task Synthesis</h2>
+      <p>Automated pipeline generating diverse, verifiable agent training tasks at scale.</p>
+      <div class="reveal">
+        <table>
+          <thead>
+            <tr><th>Agent Type</th><th>Environments</th><th>Prompt Count</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Search Agent</td><td>15 search engines</td><td>25K+</td></tr>
+            <tr><td>Code Agent</td><td>1,780+ GitHub repos</td><td>40K+</td></tr>
+            <tr><td>Code Interpreter</td><td>Statistical &amp; ML tasks</td><td>10K+</td></tr>
+            <tr><td>General Agent</td><td>Multi-tool workflows</td><td>10K+</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="example-box reveal">
+        <div class="box-label">Scale</div>
+        <p>Total: 1,800+ environments, 85,000+ prompts — each with programmatic verification for reward signal.</p>
+      </div>
+    </div>
+    <div class="frame-footer"><span class="frame-number">9</span></div>
+  </section>
+
+  <!-- Frame 10: Benchmark Results -->
+  <section class="frame" id="frame-10">
+    <div class="frame-content">
+      <h2>Benchmark Results</h2>
+      <div class="reveal">
+        <table>
+          <thead>
+            <tr><th>Benchmark</th><th>DeepSeek-V3.2</th><th>GPT-5</th><th>Claude 4 opus</th><th>Gemini 2.5 Pro</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>AIME 2025</td><td><strong>85.0</strong></td><td>86.7</td><td>79.2</td><td>79.2</td></tr>
+            <tr><td>HMMT Feb 2025</td><td><strong>72.7</strong></td><td>72.7</td><td>53.0</td><td>72.7</td></tr>
+            <tr><td>LiveCodeBench</td><td><strong>72.1</strong></td><td>70.2</td><td>69.4</td><td>63.8</td></tr>
+            <tr><td>Codeforces</td><td><strong>2028</strong></td><td>2015</td><td>1997</td><td>1980</td></tr>
+            <tr><td>MCP-Bench</td><td><strong>62.8</strong></td><td>52.0</td><td>61.3</td><td>46.2</td></tr>
+            <tr><td>MCPUniverse</td><td><strong>77.7</strong></td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="reveal">Bold values indicate best-in-class among open-source models. DeepSeek-V3.2 matches or exceeds proprietary models across multiple benchmarks.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">10</span></div>
+  </section>
+
+  <!-- Frame 11: Competition Results -->
+  <section class="frame" id="frame-11">
+    <div class="frame-content">
+      <h2>Competition Gold Medals</h2>
+      <p>DeepSeek-V3.2 achieves historic results on formal competition benchmarks.</p>
+      <div class="flex-row reveal">
+        <div class="theorem-box">
+          <div class="box-label">IMO 2025</div>
+          <p>Score: 38 / 42 — Gold medal level. Solved 6 of 6 problems.</p>
+        </div>
+        <div class="theorem-box">
+          <div class="box-label">IOI 2025</div>
+          <p>Score: 423.33 / 600 — Gold medal level.</p>
+        </div>
+      </div>
+      <div class="definition-box reveal">
+        <div class="box-label">AIME Extended</div>
+        <p>91.3% accuracy on AIME — surpassing GPT-5 (86.7%) on this mathematical reasoning benchmark.</p>
+      </div>
+      <p class="reveal">First open-source model to consistently achieve gold-medal performance on international olympiad benchmarks.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">11</span></div>
+  </section>
+
+  <!-- Frame 12: Takeaways -->
+  <section class="frame" id="frame-12">
+    <div class="frame-content">
+      <h2>Key Takeaways</h2>
+      <ul>
+        <li class="reveal">Dynamic Sparse Attention enables efficient 128K+ context at $O(Lk)$ cost — 3× cheaper inference with parity quality</li>
+        <li class="reveal">Scalable RL with GRPO at &gt;10% pre-training compute unlocks reasoning capabilities previously exclusive to proprietary models</li>
+        <li class="reveal">Agentic task synthesis with 1,800+ environments establishes a new paradigm for training tool-using agents</li>
+      </ul>
+      <p class="reveal" style="font-size: var(--small-size); color: var(--text-secondary); margin-top: 1.5em;">Open weights available at github.com/deepseek-ai — advancing the frontier of open large language models.</p>
+    </div>
+    <div class="frame-footer"><span class="frame-number">12</span></div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  });
+  </script>
+  <script>
+  class AcademicPresentation {
+    constructor() {
+      this.frames = Array.from(document.querySelectorAll('.frame'));
+      this.currentFrame = 0;
+      this.revealSteps = new Map();
+      this.revealIndex = new Map();
+      this.wheelTimeout = null;
+      this.touchStartY = 0;
+
+      this.frames.forEach((frame, i) => {
+        const reveals = Array.from(frame.querySelectorAll('.reveal'));
+        this.revealSteps.set(i, reveals);
+        this.revealIndex.set(i, 0);
+      });
+
+      this.initObserver();
+      this.initKeyboard();
+      this.initWheel();
+      this.initTouch();
+      this.goToFrame(0);
+    }
+
+    goToFrame(n) {
+      if (n < 0 || n >= this.frames.length) return;
+      this.currentFrame = n;
+      this.frames[n].scrollIntoView({ behavior: 'smooth' });
+      this.showRevealsUpTo(n, this.revealIndex.get(n));
+      this.updateFrameNumber();
+    }
+
+    showRevealsUpTo(frameIdx, step) {
+      const reveals = this.revealSteps.get(frameIdx);
+      if (!reveals) return;
+      reveals.forEach((el, i) => {
+        if (i < step) {
+          el.classList.add('visible');
+        } else {
+          el.classList.remove('visible');
+        }
+      });
+    }
+
+    nextStep() {
+      const reveals = this.revealSteps.get(this.currentFrame);
+      const idx = this.revealIndex.get(this.currentFrame);
+      if (reveals && idx < reveals.length) {
+        this.revealIndex.set(this.currentFrame, idx + 1);
+        this.showRevealsUpTo(this.currentFrame, idx + 1);
+      } else if (this.currentFrame < this.frames.length - 1) {
+        this.currentFrame++;
+        this.revealIndex.set(this.currentFrame, 0);
+        this.showRevealsUpTo(this.currentFrame, 0);
+        this.goToFrame(this.currentFrame);
+      }
+    }
+
+    prevStep() {
+      const idx = this.revealIndex.get(this.currentFrame);
+      if (idx > 0) {
+        this.revealIndex.set(this.currentFrame, idx - 1);
+        this.showRevealsUpTo(this.currentFrame, idx - 1);
+      } else if (this.currentFrame > 0) {
+        this.currentFrame--;
+        const prevReveals = this.revealSteps.get(this.currentFrame);
+        const total = prevReveals ? prevReveals.length : 0;
+        this.revealIndex.set(this.currentFrame, total);
+        this.showRevealsUpTo(this.currentFrame, total);
+        this.goToFrame(this.currentFrame);
+      }
+    }
+
+    updateFrameNumber() {
+      this.frames.forEach((frame, i) => {
+        const num = frame.querySelector('.frame-number');
+        if (num) num.textContent = i + 1;
+      });
+    }
+
+    initObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = this.frames.indexOf(entry.target);
+            if (idx !== -1) this.currentFrame = idx;
+          }
+        });
+      }, { threshold: 0.5 });
+      this.frames.forEach(f => observer.observe(f));
+    }
+
+    initKeyboard() {
+      document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+          case 'ArrowDown':
+          case ' ':
+          case 'PageDown':
+          case 'j':
+            e.preventDefault();
+            this.nextStep();
+            break;
+          case 'ArrowUp':
+          case 'PageUp':
+          case 'k':
+            e.preventDefault();
+            this.prevStep();
+            break;
+          case 'Home':
+            e.preventDefault();
+            this.revealIndex.set(0, 0);
+            this.goToFrame(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            const last = this.frames.length - 1;
+            const lastReveals = this.revealSteps.get(last);
+            this.revealIndex.set(last, lastReveals ? lastReveals.length : 0);
+            this.goToFrame(last);
+            break;
+        }
+      });
+    }
+
+    initWheel() {
+      document.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (this.wheelTimeout) return;
+        this.wheelTimeout = setTimeout(() => { this.wheelTimeout = null; }, 300);
+        if (e.deltaY > 0) {
+          this.nextStep();
+        } else if (e.deltaY < 0) {
+          this.prevStep();
+        }
+      }, { passive: false });
+    }
+
+    initTouch() {
+      document.addEventListener('touchstart', (e) => {
+        this.touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+      document.addEventListener('touchend', (e) => {
+        const deltaY = this.touchStartY - e.changedTouches[0].screenY;
+        if (Math.abs(deltaY) < 50) return;
+        if (deltaY > 0) {
+          this.nextStep();
+        } else {
+          this.prevStep();
+        }
+      }, { passive: true });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => new AcademicPresentation());
+  </script>
+</body>
+</html>
