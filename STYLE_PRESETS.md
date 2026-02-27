@@ -872,6 +872,149 @@ Before finalizing any presentation, verify:
 
 ---
 
+### 13. Distill
+
+**Vibe:** Editorial, modern academic, publication-quality — inspired by the clean web aesthetics of distill.pub
+
+**Layout:** No header or footer bars. Thin amber accent line (4px) at the top of each frame. Content centered with generous whitespace. Subtle monospace frame number in bottom-right only.
+
+**Typography:**
+- Heading: `Inter` (500)
+- Body: `Source Serif 4` (400)
+- Mono: `Source Code Pro` (400)
+- Font URL: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap`
+
+**Colors:**
+```css
+:root {
+    --bg-primary: #fcfcfa;
+    --header-bg: transparent;
+    --header-fg: #303030;
+    --footer-bg: transparent;
+    --footer-fg: #aaaaaa;
+    --text-primary: #303030;
+    --text-secondary: #757575;
+    --accent: #c27528;
+    --theorem-bg: #faf6ee;
+    --theorem-border: #c27528;
+    --definition-bg: #eef3f8;
+    --definition-border: #4a7a9b;
+    --proof-bg: transparent;
+    --proof-border: #d0d0d0;
+    --example-bg: #f0f5ee;
+    --example-border: #5a8a5a;
+    --chrome-height-top: 0;
+    --chrome-height-bottom: clamp(0.8rem, 1.5vh, 1.2rem);
+}
+```
+
+**Signature Elements:**
+- Thin amber accent line (4px) at the top of each frame — the Distill signature. Implemented as a `::before` pseudo-element on `.frame`:
+  ```css
+  .frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+      z-index: 101;
+  }
+  ```
+- No header/footer bars — maximum content space, editorial feel
+- Sans-serif headings (`Inter`) + serif body (`Source Serif 4`) — the only theme with this editorial typographic contrast
+- Amber/warm accent color inspired by distill.pub's branding warmth
+- Extra-generous frame padding: override `--frame-padding: clamp(1.5rem, 6vw, 6rem)` for wider margins than other themes
+- Theorem boxes with barely-there tinted backgrounds and thin (3px) left borders — lighter touch than Beamer-style themes:
+  ```css
+  .theorem-box, .definition-box, .example-box, .lemma-box, .corollary-box {
+      border-left-width: 3px;
+  }
+  ```
+- Frame number displayed in monospace, bottom-right corner only — no author or title in footer
+- Section dividers use a centered thin horizontal rule (`1px solid #d0d0d0`) above the section title instead of colored backgrounds
+- Title frame uses lighter heading weight (500 instead of 700) for an editorial, not authoritative, feel
+- `h2` frame titles use `Inter` at weight 500 — clean and modern, never heavy
+- Ideal for ML/AI research talks, interactive article presentations, and Distill-style explainers
+
+**Additional CSS Overrides (apply on top of base styles):**
+```css
+/* Distill theme: editorial overrides */
+
+/* Wider margins than standard themes */
+:root {
+    --frame-padding: clamp(1.5rem, 6vw, 6rem);
+    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-body: 'Source Serif 4', 'Georgia', serif;
+    --font-mono: 'Source Code Pro', 'Courier New', monospace;
+}
+
+/* Amber accent line at top of every frame */
+.frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent);
+    z-index: 101;
+}
+
+/* Lighter title weight */
+.title-frame h1 {
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+/* Clean h2 styling */
+h2 {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* Section divider: thin rule instead of colored bg */
+.section-frame .frame-content::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: #d0d0d0;
+    margin: 0 auto clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/* Thinner theorem borders */
+.theorem-box, .definition-box, .example-box, .lemma-box, .corollary-box {
+    border-left-width: 3px;
+}
+
+/* Footer: frame number only, monospace, right-aligned */
+.frame-footer {
+    justify-content: flex-end;
+}
+
+.frame-footer .author-short,
+.frame-footer .title-short {
+    display: none;
+}
+
+.frame-footer .frame-number {
+    font-family: var(--font-mono);
+    font-size: var(--small-size);
+    color: #aaaaaa;
+}
+
+/* Bullet points: simple circles instead of triangles */
+.item-list li::before {
+    content: '\2022'; /* Bullet dot */
+    color: var(--accent);
+}
+```
+
+---
+
 ## Font Pairing Quick Reference
 
 | Preset | Heading Font | Body Font | Mono Font | Source |
@@ -888,12 +1031,13 @@ Before finalizing any presentation, verify:
 | Thesis Defense | STIX Two Text (700) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
 | Seminar | EB Garamond (500i) | EB Garamond (400) | Source Code Pro | Google Fonts |
 | Journal Article | STIX Two Text (600) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
+| Distill | Inter (500) | Source Serif 4 (400) | Source Code Pro | Google Fonts |
 
 ---
 
 ## DO NOT USE (Generic / Non-Academic Patterns)
 
-**Fonts:** Calibri, Arial, Comic Sans, display/decorative fonts (Archivo Black, Syne, Clash Display). No sans-serif as the sole body font except in Metropolis.
+**Fonts:** Calibri, Arial, Comic Sans, display/decorative fonts (Archivo Black, Syne, Clash Display). No sans-serif as the sole body font except in Metropolis. Sans-serif headings paired with serif body are acceptable in Distill theme only.
 
 **Colors:** Neon accents (#00ffcc, #d4ff00, #ff00aa), pure saturated backgrounds, electric blue (#0066ff), gradient meshes.
 

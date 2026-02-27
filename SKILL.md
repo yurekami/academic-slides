@@ -308,6 +308,7 @@ If the user's initial message specifies enough to skip format questions (e.g., t
 **Examples of fast-path triggers:**
 - "/academic-slides 10-slide lecture on dynamic programming using Metropolis"
 - "/academic-slides conference talk on our ICML paper, Berlin theme"
+- "/academic-slides 12 slides on mechanistic interpretability, Distill style"
 - "Make 15 slides about transformer attention for my lab meeting"
 
 In all of these cases, format is clear from context but content quality questions have not been answered. Proceed to Phase 0.5.
@@ -527,6 +528,7 @@ Users can select a theme in **two ways**:
 | Thesis Defense | Formal, institution-branded | Thesis/dissertation defense |
 | Seminar | Informal, relaxed | Lab meetings, reading groups |
 | Journal Article | Paper-style layout | Research presentations |
+| Distill | Editorial, modern web-academic | ML/AI talks, interactive explainers |
 
 ### Step 2.0: Style Path Selection
 
@@ -559,6 +561,7 @@ First, ask how the user wants to choose their theme:
   - "Thesis Defense" -- Formal, institution-branded
   - "Seminar" -- Informal and relaxed for lab meetings
   - "Journal Article" -- Paper-style layout for research talks
+  - "Distill" -- Editorial, modern web-academic with amber accents (inspired by distill.pub)
 
 (If user picks one, skip to Phase 3.)
 
@@ -580,7 +583,7 @@ First, ask how the user wants to choose their theme:
 |------|---------------|
 | Authoritative/Rigorous | Madrid, Warsaw, Classic Serif, Thesis Defense |
 | Clear/Pedagogical | Berlin, Copenhagen, Lecture Notes |
-| Modern/Minimal | Metropolis, Technical Report, Seminar |
+| Modern/Minimal | Metropolis, Technical Report, Seminar, Distill |
 | Classic/Traditional | Cambridge, Classic Serif, Journal Article |
 
 ### Step 2.2: Generate Theme Previews
@@ -1609,11 +1612,11 @@ Use this guide to match visual treatment to intended tone:
 - Best themes: Madrid, Warsaw, Cambridge, Thesis Defense
 
 ### Modern / Clean
-- Sans-serif fonts (Source Sans 3, Inter for body only)
+- Sans-serif fonts (Source Sans 3, Inter for headings)
 - High contrast, minimal decoration
 - Thin or absent header/footer bars
 - Generous whitespace, content-focused
-- Best themes: Metropolis, Technical Report
+- Best themes: Metropolis, Technical Report, Distill
 
 ### Warm / Pedagogical
 - Serif or rounded sans-serif fonts
